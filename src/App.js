@@ -1,23 +1,18 @@
-import logo from './logo.svg';
-import './App.css';
-
+import Layout from "./components/shared/Layout";
+import AllToys from "./pages/AllToys";
+import {Route,Routes} from "react-router-dom"
+import AddToy from "./pages/AddToy";
+import EditToy from "./pages/EditToy";
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Layout>
+        <Routes>
+           <Route path="/" element={<AllToys/>}></Route>
+           <Route path="/add-toy" element={<AddToy/>}></Route>
+           <Route path="/edit-toy/:id" element={<EditToy/>}></Route>
+        </Routes>
+        </Layout>
     </div>
   );
 }
