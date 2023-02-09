@@ -61,12 +61,15 @@ const AllToys = () => {
         closeConfirmDeleteModalHandler={closeConfirmDeleteModalHandler}
         confirmDeleteHandler={confirmDeleteHandler}
       ></DeleteConfirmation>
+
       <Container className="mt-2">
+
         <Row>
           <Col className="col-md-4 offset-md-4">
             <Button
               variant="primary"
               type="button"
+              style={{ marginTop: "20px" ,marginBottom: "20px",width: "350px"}}
               onClick={() => {
                 navigate("/add-toy");
               }}
@@ -82,11 +85,11 @@ const AllToys = () => {
                 <Card.Img
                   variant="top"
                   src={toy.imageUrl}
-                  style={{ height: 400, width: "100%" }}
+                  style={{ height: 150, width: "100%" }}
                 />
                 <Card.Body>
                   <Card.Title>{toy.name}</Card.Title>
-                  <Card.Text>Price - {toy.price}</Card.Text>
+                  <Card.Text>Experience - {toy.price}</Card.Text>
                   <Button
                     variant="primary"
                     type="button"

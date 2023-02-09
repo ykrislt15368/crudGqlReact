@@ -34,7 +34,7 @@ const AddToy = () =>{
             <Container className="mt-2">
               <Row>
                 <Col className="col-md-8 offset-md-2">
-                   <legend>Add a New Toy Form</legend>
+                   <legend>Add a New Memeber in Team</legend>
 
                    <Form.Group className="mb-3" controlId="formName">
                      <Form.Label>Name</Form.Label>
@@ -42,7 +42,7 @@ const AddToy = () =>{
                    </Form.Group>
 
                    <Form.Group className="mb-3" controlId="formPrice">
-                     <Form.Label>Price</Form.Label>
+                     <Form.Label>Experience</Form.Label>
                      <Form.Control type="text" ref={price}/>
                    </Form.Group>
 

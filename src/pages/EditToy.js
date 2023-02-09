@@ -14,7 +14,6 @@ const EditToy = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-
   const { data } = useQuery(GET_ToyById, {
     fetchPolicy: "no-cache",
     variables: { id: Number(id) 
@@ -52,7 +51,7 @@ const EditToy = () => {
             <Container className="mt-2">
               <Row>
                 <Col className="col-md-8 offset-md-2">
-                   <legend>Update a Toy Form</legend>
+                   <legend>Update a Employee In Team</legend>
 
                    <Form.Group className="mb-3" controlId="formName">
                      <Form.Label>Name</Form.Label>
@@ -60,7 +59,7 @@ const EditToy = () => {
                    </Form.Group>
 
                    <Form.Group className="mb-3" controlId="formPrice">
-                     <Form.Label>Price</Form.Label>
+                     <Form.Label>Experience</Form.Label>
                      <Form.Control type="text" ref={price}/>
                    </Form.Group>
 
