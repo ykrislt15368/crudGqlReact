@@ -1,10 +1,11 @@
 import { Col, Container, Row, Form, Button } from "react-bootstrap";
 import { useEffect, useRef } from "react";
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery,gql } from "@apollo/client";
 import { useNavigate, useParams } from "react-router-dom";
 //import {UPDATE_Toy} from "../graphql/toysMutation";
 import {UPDATE_Toy} from '../graphql/toysMutation';
 import {GET_ToyById} from "../graphql/toysQuery";
+import { logger } from '../logger';
 
 const EditToy = () => {
     
@@ -33,18 +34,58 @@ const EditToy = () => {
 
     
     
-   const updateToyHandler = () => {
-        updateToy({
-          variables: {
-            id: Number(id),
-            name: name.current.value,
-            imageUrl: imageUrl.current.value,
-            price: Number(price.current.value),
+    
+  // const updateToyHandler = () => {
+  //   updateToy({
+  //     variables: {
+  //       id: Number(id),
+  //       name: name.current.value,
+  //       imageUrl: imageUrl.current.value,
+  //       price: Number(price.current.value),
+  //     },
+  //   }).then(() => {
+  //     navigate("/");
+  //   });
+  // };
+
+
+  const updateToyHandler = () => {
+    logger.info("Update Record handler invoked");
+    updateToy({
+      variables: {
+        id: Number(id),
+        name: name.current.value,
+        imageUrl: imageUrl.current.value,
+        price: Number(price.current.value),
+      },
+      update(cache, { data: { updateToy } }) {
+        cache.modify({
+          fields: {
+            allToys(existingData = [], { readField }) {
+              existingData = existingData.filter(
+                (item) => updateToy.id !== readField("id", item)
+              );
+              const updatToyRef = cache.writeFragment({
+                data: updateToy,
+                fragment: gql`
+                  fragment newToy on Toy {
+                    id
+                    name
+                    price
+                    imageUrl
+                  }
+                `,
+              });
+              return [...existingData, updatToyRef];
+            },
           },
-        }).then(() => {
-          navigate("/");
         });
-      };
+      },
+    }).then(() => {
+      navigate("/");
+    });
+    logger.info("Updated Cache for updating record ");
+  }
 
     return(
         <>

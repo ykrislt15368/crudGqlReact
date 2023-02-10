@@ -12,7 +12,8 @@ const Layout=({children})=>{
         </Nav>
         </Container>
       </Navbar> 
-
+      
+      
       <Container>
         {children}
       </Container> 

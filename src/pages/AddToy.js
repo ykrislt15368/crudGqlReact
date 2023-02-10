@@ -6,7 +6,8 @@ import Row from 'react-bootstrap/Row';
 import { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {CREATE_NewToy} from '../graphql/toysMutation';
-import { useMutation } from '@apollo/client';
+import { useMutation,gql } from '@apollo/client';
+import { logger } from '../logger';
 
 const AddToy = () =>{
    
@@ -17,16 +18,54 @@ const AddToy = () =>{
 
     const [addToy] = useMutation(CREATE_NewToy);
 
-    const addToyHandler =() =>{
-        addToy({
-            variables:{
-                name: name.current.value,
-                price: Number(price.current.value),
-                imageUrl: imageUrl.current.value,
+    // const addToyHandler = () => {
+    //   addToy({
+    //     variables: {
+    //       name: name.current.value,
+    //       imageUrl: imageUrl.current.value,
+    //       price: Number(price.current.value),
+    //     },
+    //   }).then(() => {
+    //     navigate("/");
+    //   });
+    // };
+
+    const addToyHandler = () => {
+      logger.info("Add Record Handler invoked");
+      //logger.warn("Added warning");
+      // logger.error("debug");
+      //logger.success("sucess");
+      
+      addToy({
+        variables: {
+          name: name.current.value,
+          imageUrl: imageUrl.current.value,
+          price: Number(price.current.value),
+        },
+        update(cache, { data: { createToy } }) {
+          cache.modify({
+            fields: {
+              allToys(existingToys = []) {
+                const newToyRef = cache.writeFragment({
+                  data: createToy,
+                  fragment: gql`
+                    fragment newToy on Todo {
+                      id
+                      name
+                      price
+                      imageUrl
+                    }
+                  `,
+                });
+                return [...existingToys, newToyRef];
+              },
             },
-        }).then(()=>{
-            navigate("/");
-        });
+          });
+        },
+      }).then(() => {
+        navigate("/");
+      });
+      logger.info("Invoked Cache for adding record");
     };
 
     return(

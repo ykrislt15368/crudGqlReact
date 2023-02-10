@@ -8,7 +8,9 @@ import Row from "react-bootstrap/Row";
 import { useNavigate } from "react-router-dom";
 import { DELETE_ToyById } from "../graphql/toysMutation";
 import DeleteConfirmation from "../components/shared/DeleteConformation";
-//import DeleteConfirmation from "../components/shared/DeleteConfirmation";
+import { logger } from '../logger';
+
+//import {UPDATE_Toy} from '../graphql/toysMutation';
  
 const AllToys = () => {
   const [allToysData, setAllToysData] = useState([]);
@@ -23,35 +25,74 @@ const AllToys = () => {
   const [deleteToy] = useMutation(DELETE_ToyById);
  
   useEffect(() => {
+    logger.info("useEffect after componenet renderde");
     if (data?.allToys) {
       setAllToysData(data.allToys);
     }
   }, [data]);
  
   const openConfirmDeleteModalHandler = (id) => {
+    logger.info("Delete Handler Modal conformed");
     setItemIDToDelete(id);
     setShowModal(true);
   };
  
   const closeConfirmDeleteModalHandler = () => {
+    
+    logger.info("Modal Closed");
     setItemIDToDelete(0);
     setShowModal(false);
   };
  
+  // const confirmDeleteHandler = () => {
+  //   deleteToy({
+  //     variables: {
+  //       id: itemIDToDelete,
+  //     },
+  //   }).then(() => {
+  //     setAllToysData((existingData) => {
+  //       return existingData.filter((_) => _.id != itemIDToDelete);
+  //     });
+  //     setItemIDToDelete(0);
+  //     setShowModal(false);
+  //   });
+  // };
+
+
+
   const confirmDeleteHandler = () => {
+    
+    
+    logger.info("Delete Handler method invoked");
     deleteToy({
       variables: {
         id: itemIDToDelete,
       },
+      update(cache, { data: { removeToy } }) {
+        cache.modify({
+          fields: {
+            allToys(existingData = [], { readField }) {
+              existingData = existingData.filter(
+                (toy) => (readField("id", toy)!== removeToy.id)
+              );
+              return existingData;
+            },
+          },
+        });
+      },
     }).then(() => {
       setAllToysData((existingData) => {
-        return existingData.filter((_) => _.id != itemIDToDelete);
+        return existingData.filter((_) => _.id !== itemIDToDelete);
       });
       setItemIDToDelete(0);
       setShowModal(false);
     });
+    logger.info("Delete Handler cache updated");
+    
   };
  
+
+
   return (
     <>
       <DeleteConfirmation
@@ -85,11 +126,11 @@ const AllToys = () => {
                 <Card.Img
                   variant="top"
                   src={toy.imageUrl}
-                  style={{ height: 150, width: "100%" }}
+                  style={{ height: 250, width: "100%" }}
                 />
                 <Card.Body>
                   <Card.Title>{toy.name}</Card.Title>
-                  <Card.Text>Experience - {toy.price}</Card.Text>
+                  <Card.Text>Experience - {toy.price}yrs</Card.Text>
                   <Button
                     variant="primary"
                     type="button"
